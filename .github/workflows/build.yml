@@ -30,18 +30,14 @@ jobs:
 
       - name: Checkout codebase
         uses: actions/checkout@v3
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
 
       - name: Checkout v2fly/domain-list-community
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         uses: actions/checkout@v3
         with:
           repository: v2fly/domain-list-community
           path: domain-list-community
-          
-      - name: test
-        run: |
-          ls -lh ./
           
       - name: Add RuleSet
         run: |
@@ -52,24 +48,24 @@ jobs:
           ls -lh data/
 
       - name: Append attribute rules
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         run: |
           echo "include:geolocation-!cn @cn" >> ./domain-list-community/data/cn
           echo "include:geolocation-cn @!cn" >> ./domain-list-community/data/geolocation-\!cn
 
       - name: Get dependencies and run
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         run: |
           go run ./ --datapath=./domain-list-community/data
 
       - name: Generate sha256 hashsum
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         run: |
           cd publish || exit 1
           sha256sum geosite.dat > geosite.dat.sha256sum
 
       - name: Git push assets to "release" branch
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         run: |
           cd publish || exit 1
           git init
@@ -82,7 +78,7 @@ jobs:
           git push -f publish release
 
       - name: Create a release
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -94,7 +90,7 @@ jobs:
           prerelease: false
 
       - name: Upload geosite.dat
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,7 +101,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload geosite.dat sha256sum
-        if: ${{ env.NeedToSync }}
+        #if: ${{ env.NeedToSync }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
