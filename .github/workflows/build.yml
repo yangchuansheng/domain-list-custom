@@ -19,9 +19,13 @@ jobs:
 
       - name: Compare latest tags and set variables
         run: |
-          echo "NeedToSync=true" >> $GITHUB_ENV
-          echo "RELEASE_NAME=test" >> $GITHUB_ENV
-          echo "TAG_NAME=test" >> $GITHUB_ENV
+          upstreamLatestTag=$(curl -sSL --connect-timeout 5 -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/v2fly/domain-list-community/releases/latest | grep "tag_name" | cut -d\" -f4)
+          thisLatestTag=$(curl -sSL --connect-timeout 5 -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/releases/latest | grep "tag_name" | cut -d\" -f4)
+          if [[ $upstreamLatestTag != $thisLatestTag ]]; then
+            echo "NeedToSync=true" >> $GITHUB_ENV
+          fi
+          echo "RELEASE_NAME=$upstreamLatestTag" >> $GITHUB_ENV
+          echo "TAG_NAME=$upstreamLatestTag" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout codebase
@@ -35,13 +39,12 @@ jobs:
           repository: v2fly/domain-list-community
           path: domain-list-community
           
-      - name: modify
+      - name: Add RuleSet
         run: |
           cd domain-list-community
           wget https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Domain.yaml -O ~/Global_Domain.yaml
           grep -Ev "\+\.|^#" ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/^/full:/g" >> data/Global
           grep "+." ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/+.//g" >> data/Global
-          cat data/Global
 
       - name: Append attribute rules
         if: ${{ env.NeedToSync }}
