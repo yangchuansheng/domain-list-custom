@@ -20,8 +20,8 @@ jobs:
       - name: Compare latest tags and set variables
         run: |
           echo "NeedToSync=true" >> $GITHUB_ENV
-          echo "RELEASE_NAME=$upstreamLatestTag" >> $GITHUB_ENV
-          echo "TAG_NAME=$upstreamLatestTag" >> $GITHUB_ENV
+          echo "RELEASE_NAME=test" >> $GITHUB_ENV
+          echo "TAG_NAME=test" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout codebase
