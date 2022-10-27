@@ -38,6 +38,14 @@ jobs:
         with:
           repository: v2fly/domain-list-community
           path: domain-list-community
+          
+      - name: modify
+        run: |
+          cd domain-list-community
+          wget https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Domain.yaml -O ~/Global_Domain.yaml
+          grep -Ev "\+\.|^#" ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/^/full:/g" >> data/Global
+          grep "+." ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/+.//g" >> data/Global
+          cat data/Global
 
       - name: Append attribute rules
         if: ${{ env.NeedToSync }}
