@@ -44,9 +44,12 @@ jobs:
           cd ./domain-list-community
           wget https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Domain.yaml -O ~/Global_Domain.yaml
           wget https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global.yaml -O ~/Global.yaml
+          wget https://raw.githubusercontent.com/yangchuansheng/clash-rules1/main/Proxy-Domain.list -O ~/Proxy-Domain.list
           grep -Ev "\+\.|^#" ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/^/full:/g" > data/geolocation-!cn
           grep "+." ~/Global_Domain.yaml|sed "/payload:/d"|sed "s/  - //g"|sed "s/'//g"|sed "s/+.//g" >> data/geolocation-!cn
           grep "DOMAIN-KEYWORD" ~/Global.yaml|sed "s/  - DOMAIN-KEYWORD,/keyword:/g" >> data/geolocation-!cn
+          sed -E "s/DOMAIN-SUFFIX,//g;s/DOMAIN,/full:/g;s/DOMAIN-KEYWORD,/keyword:/g" ~/Proxy-Domain.list >> data/geolocation-!cn
+          cat data/geolocation-!cn
 
       - name: Append attribute rules
         #if: ${{ env.NeedToSync }}
